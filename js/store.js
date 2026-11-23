@@ -23,6 +23,16 @@ LP.now=()=>new Date().toISOString();
     if(changed) ls.set('lp_signups',s);
     ls.set('lp_schema',2);
   }
+  // Renamed launches (e.g. ShopperVON → Merkuri): move saved/follows/signups/overrides to the new id
+  const A=window.LAUNCH_ALIASES||{}, ren=id=>A[id]||id;
+  if(Object.keys(A).length&&ls.get('lp_alias_v',0)<Object.keys(A).length){
+    for(const k of ['lp_saved','lp2_follows'])ls.set(k,[...new Set(ls.get(k,[]).map(ren))]);
+    ls.set('lp_signups',ls.get('lp_signups',[]).map(x=>({...x,launch:x.launch&&ren(x.launch),launches:(x.launches||[]).map(ren)})));
+    ls.set('lp2_updates',ls.get('lp2_updates',[]).map(u=>({...u,launchId:ren(u.launchId)})));
+    ls.set('lp2_projects',ls.get('lp2_projects',[]).map(p=>({...p,launchId:p.launchId&&ren(p.launchId)})));
+    const ov=ls.get('lp2_overrides',{});for(const [o,n] of Object.entries(A))if(ov[o]){ov[n]={...ov[o],...(ov[n]||{})};delete ov[o]}ls.set('lp2_overrides',ov);
+    ls.set('lp_alias_v',Object.keys(A).length);
+  }
 })();
 
 /* ---------- collections ---------- */
@@ -51,7 +61,7 @@ LP.allLaunches=function(){
   return [...seeds,...custom].map(l=>({...l,milestones:normMilestones(l.milestones)}));
 };
 LP.publicLaunches=({listedOnly=true}={})=>LP.allLaunches().filter(l=>l.visibility==='discoverable'||(!listedOnly&&l.visibility==='page'));
-LP.getLaunch=id=>LP.allLaunches().find(l=>l.id===id&&l.visibility!=='private');
+LP.getLaunch=id=>{id=(window.LAUNCH_ALIASES||{})[id]||id;return LP.allLaunches().find(l=>l.id===id&&l.visibility!=='private')};
 LP.publicMilestones=l=>l.milestones.filter(m=>m.approved&&m.published);
 LP.progress=l=>{const m=LP.publicMilestones(l);return m.length?Math.round(m.filter(x=>x.done).length/m.length*100):0};
 LP.setOverride=(id,patch)=>{const ov=ls.get(K.overrides,{});ov[id]={...(ov[id]||{}),...patch,updatedAt:LP.now()};ls.set(K.overrides,ov);LP.remote.pushDoc('overrides',{id,...ov[id]});LP.remote.publishLaunch(id)};

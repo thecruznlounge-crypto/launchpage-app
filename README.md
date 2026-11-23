@@ -51,5 +51,6 @@ The v1 keys `lp_saved` and `lp_signups` are read in place. Legacy signups get an
 
 ## Changes from v1
 
+* ShopperVON is now **Merkuri** (`merkuri.app`). Old `#/launch/shoppervon` links and saved data still work.
 * "Graduate to mypwa.store" now reads **Graduate to Hunnyhive** (`hunnyhive.app`). You can configure this in `js/config.js`.
 * Public progress is now calculated only from owner-approved, published milestones. All 13 seeds keep their original milestones, so they still show 50%.

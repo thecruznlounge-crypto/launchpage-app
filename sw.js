@@ -1,5 +1,5 @@
 /* LaunchPage.link service worker — offline-first app shell */
-const VERSION = 'launchpage-v2.0.0';
+const VERSION = 'launchpage-v2.0.1';
 const CORE = [
   './', './index.html', './manifest.webmanifest',
   './css/styles.css',
