@@ -1,10 +1,10 @@
 /* LaunchPage.link service worker — offline-first app shell */
-const VERSION = 'launchpage-v2.0.1';
+const VERSION = 'launchpage-v2.0.2';
 const CORE = [
   './', './index.html', './manifest.webmanifest',
   './css/styles.css',
   './js/config.js', './js/icons.js', './js/data.js', './js/zip.js', './js/store.js', './js/app.js', './js/studio.js',
-  './img/icon-192.png', './img/icon-512.png', './img/icon-maskable-512.png', './img/apple-touch-icon.png', './img/favicon-32.png'
+  './img/icon-192.png', './img/icon-512.png', './img/icon-maskable-512.png', './img/apple-touch-icon.png', './img/favicon-32.png', './img/launches/merkuri.jpg'
 ];
 self.addEventListener('install', e => {
   e.waitUntil(caches.open(VERSION).then(c => c.addAll(CORE)).then(() => self.skipWaiting()));

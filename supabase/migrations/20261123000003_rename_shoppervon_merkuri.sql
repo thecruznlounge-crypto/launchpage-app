@@ -13,3 +13,8 @@ begin
     delete from public.launches where id = 'shoppervon';
   end if;
 end $$;
+
+-- Merkuri listing details (from the Merkuri app manifest)
+update public.launches set category = 'Delivery', image = 'img/launches/merkuri.jpg',
+  tagline = 'Launch, scale and manage local micro-delivery. Compare real couriers, watch video profiles, compare rates, capture proof of delivery and pay with SecurePay escrow.'
+where id = 'merkuri';

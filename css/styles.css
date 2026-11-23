@@ -148,7 +148,7 @@ label.f{display:grid;gap:6px;font-size:13px;font-weight:600;color:var(--muted)}
 .lcard{display:flex;flex-direction:column;border-radius:var(--r);overflow:hidden;background:var(--card);border:1px solid var(--line);cursor:pointer;transition:border-color .2s,transform .15s}
 .lcard:hover{border-color:var(--line2);transform:translateY(-2px)}
 .lcard .cover{aspect-ratio:16/8;position:relative}
-.lcard .cover svg{width:100%;height:100%;display:block}
+.lcard .cover svg,.lcard .cover img{width:100%;height:100%;display:block;object-fit:cover}
 .lcard .cover .pill{position:absolute;left:10px;top:10px;backdrop-filter:blur(6px);background:rgba(7,20,28,.72)}
 .lcard .cover .save-btn{position:absolute;right:6px;top:6px;background:rgba(7,20,28,.6)}
 .lcard .body{padding:13px 14px 15px;display:grid;gap:9px;flex:1}
