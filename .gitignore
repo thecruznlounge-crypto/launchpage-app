@@ -1,0 +1,5 @@
+node_modules/
+workers/audit/reports/
+.DS_Store
+*.log
+.env

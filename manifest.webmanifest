@@ -1,0 +1,32 @@
+{
+  "id": "./",
+  "name": "LaunchPage.link — Who Can? I Can!",
+  "short_name": "LaunchPage",
+  "description": "Discover upcoming apps and brands, follow approved progress, join waitlists, and help launch them. Discover. Build. Launch.",
+  "start_url": "./#/",
+  "scope": "./",
+  "display": "standalone",
+  "display_override": ["window-controls-overlay", "standalone"],
+  "orientation": "any",
+  "background_color": "#07141C",
+  "theme_color": "#07141C",
+  "lang": "en",
+  "dir": "ltr",
+  "categories": ["productivity", "business", "lifestyle"],
+  "prefer_related_applications": false,
+  "icons": [
+    {"src": "img/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any"},
+    {"src": "img/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any"},
+    {"src": "img/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable"}
+  ],
+  "shortcuts": [
+    {"name": "Launches", "url": "./#/launches", "icons": [{"src": "img/icon-192.png", "sizes": "192x192"}]},
+    {"name": "I Can Help", "url": "./#/ican", "icons": [{"src": "img/icon-192.png", "sizes": "192x192"}]},
+    {"name": "Studio", "url": "./#/studio", "icons": [{"src": "img/icon-192.png", "sizes": "192x192"}]}
+  ],
+  "screenshots": [
+    {"src": "img/screenshot-mobile-home.png", "sizes": "390x844", "type": "image/png", "form_factor": "narrow", "label": "Discover upcoming launches"},
+    {"src": "img/screenshot-mobile-detail.png", "sizes": "390x844", "type": "image/png", "form_factor": "narrow", "label": "Follow approved progress"},
+    {"src": "img/screenshot-desktop.png", "sizes": "1280x800", "type": "image/png", "form_factor": "wide", "label": "LaunchPage on desktop"}
+  ]
+}

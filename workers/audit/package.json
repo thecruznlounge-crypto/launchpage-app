@@ -1,0 +1,20 @@
+{
+  "name": "launchpage-audit-worker",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Evidence-based website audits for LaunchPage Studio (Playwright headless Chromium).",
+  "bin": { "launchpage-audit": "audit.mjs" },
+  "scripts": {
+    "postinstall": "playwright install chromium",
+    "audit": "node audit.mjs"
+  },
+  "dependencies": {
+    "playwright": "^1.48.0"
+  },
+  "optionalDependencies": {
+    "lighthouse": "^12.0.0",
+    "chrome-launcher": "^1.1.0"
+  },
+  "engines": { "node": ">=18" }
+}
