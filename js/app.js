@@ -24,6 +24,8 @@ LP.fmtDate=d=>d?new Date(d).toLocaleDateString(undefined,{month:'short',day:'num
 LP.ago=d=>{const s=(Date.now()-new Date(d))/1000;if(s<60)return'just now';if(s<3600)return Math.floor(s/60)+'m ago';if(s<86400)return Math.floor(s/3600)+'h ago';return Math.floor(s/86400)+'d ago'};
 const pillFor=l=>{const t=LP.statusTone(l);return `<span class="pill ${t==='live'?'live':t==='beta'?'beta':'idea'}">${E(l.status)}</span>`};
 LP.pillFor=pillFor;
+const initials=n=>String(n||'?').replace(/[^A-Za-z0-9 ]/g,'').split(/\s+/).filter(Boolean).map(w=>w[0]).join('').slice(0,2).toUpperCase()||'?';
+LP.logo=(l,cls='')=>{const src=LP.logoFor(l);return src?`<img class="logo ${cls}" src="${E(src)}" alt="${E(l.name)} logo" loading="lazy" onerror="this.outerHTML='<span class=&quot;logo mono ${cls}&quot;>${E(initials(l.name))}</span>'">`:`<span class="logo mono ${cls}" aria-hidden="true">${E(initials(l.name))}</span>`};
 const media=(l,opts)=>l.image?`<img src="${E(l.image)}" alt="${E(l.name)}" loading="lazy">`:launchArt(l,opts);
 LP.media=media;
 
@@ -88,7 +90,7 @@ window.addEventListener('lp:data',()=>LP.render());
 function lrow(l,extra=''){
   const p=LP.progress(l),s=LP.isSaved(l.id);
   return `<div class="lrow" data-go="#/launch/${E(l.id)}" role="link" tabindex="0" aria-label="${E(l.name)}">
-    <div class="thumb">${media(l,{w:236,h:152})}</div>
+    ${LP.logo(l,'row')}
     <div class="grow"><div class="row between"><div class="nm">${E(l.name)}</div><button class="save-btn ${s?'on':''}" data-save="${E(l.id)}" aria-label="${s?'Unsave':'Save'} ${E(l.name)}" aria-pressed="${s}">${ic('bookmark')}</button></div>
       <div class="sub">${E(l.category)} · ${E(l.status)}</div>
       <div class="row" style="margin-top:8px"><div class="progress grow" aria-label="${p}% of approved milestones complete"><i style="width:${p}%"></i></div><span class="pct">${p}%</span></div>${extra}</div></div>`;
@@ -97,7 +99,7 @@ function lcard(l){
   const p=LP.progress(l),s=LP.isSaved(l.id);
   return `<article class="lcard" data-go="#/launch/${E(l.id)}" role="link" tabindex="0" aria-label="${E(l.name)}">
     <div class="cover">${media(l,{w:640,h:320})}${pillFor(l)}<button class="save-btn ${s?'on':''}" data-save="${E(l.id)}" aria-label="${s?'Unsave':'Save'} ${E(l.name)}" aria-pressed="${s}">${ic('bookmark')}</button></div>
-    <div class="body"><div class="row between"><div class="nm">${E(l.name)}</div><span class="tag">${E(l.category)}</span></div>
+    <div class="body"><div class="row between"><div class="row" style="gap:10px;min-width:0">${LP.logo(l)}<div class="nm">${E(l.name)}</div></div><span class="tag">${E(l.category)}</span></div>
     <p class="muted small" style="margin:0">${E(l.tagline)}</p>
     <div class="row xs muted between"><span>${p}% approved milestones</span><span>${ic('users')} ${LP.interest(l)}</span></div>
     <div class="progress"><i style="width:${p}%"></i></div></div></article>`;
@@ -133,7 +135,7 @@ function home(){
     <div class="grid g3">
       <div class="card"><div class="row" style="color:var(--accent)">${ic('rocket')}<h3>1. List the launch</h3></div><p class="muted small">Post the concept, audience, milestones, and what kind of people are needed.</p></div>
       <div class="card"><div class="row" style="color:var(--accent)">${ic('radar')}<h3>2. Capture roles</h3></div><p class="muted small">People don't just join a waitlist. They say whether they're customers, partners, testers, suppliers, sponsors, or promoters.</p></div>
-      <div class="card"><div class="row" style="color:var(--accent)">${ic('install')}<h3>3. Graduate to ${E(STORE)}</h3></div><p class="muted small">Once ready, the page changes from Join Waitlist to Install App and sends traffic to the live product on <a href="${E(STORE_URL)}" target="_blank" rel="noopener">${E(STORE_URL.replace(/^https?:\/\//,''))}</a>.</p></div>
+      <div class="card"><div class="row" style="color:var(--accent)"><img src="img/hunnyhive-mark.svg" alt="" class="hh-mark"><h3>3. Graduate to ${E(STORE)}</h3></div><p class="muted small">Once ready, the page changes from Join Waitlist to Install App and sends traffic to the live product on <a href="${E(STORE_URL)}" target="_blank" rel="noopener">${E(STORE_URL.replace(/^https?:\/\//,''))}</a>.</p></div>
     </div></section>
   </main>`;
 }
@@ -162,6 +164,12 @@ function launches(){
   </main>`;
 }
 
+/* ---------- Hunnyhive badge (every project page) ---------- */
+function hhBadge(l){
+  const a=LP.hhListing(l);
+  return a?`<a class="hh-badge" href="${E(LP.hhPage(a))}" target="_blank" rel="noopener"><img src="img/hunnyhive-mark.svg" alt="">${a.status==='live'?'Get it on':'Preview on'} ${E(STORE)}</a>`
+          :`<span class="hh-badge soon"><img src="img/hunnyhive-mark.svg" alt="">Coming to ${E(STORE)}</span>`;
+}
 /* ---------- Detail ---------- */
 function detail(id){
   const l=LP.getLaunch(id);
@@ -174,11 +182,13 @@ function detail(id){
   return LP.topbar({title:'Launch Detail',back:true})+`<main class="main narrow">
   <div class="dhero">${hero}</div>
   <div class="row wrap" style="gap:6px;margin-top:12px"><span class="tag">${E(l.category)}</span>${pillFor(l)}${l.site?`<span class="tag">${ic('globe')} ${E(l.site)}</span>`:''}</div>
-  <h1 style="font-size:32px;margin-top:10px">${E(l.name)}</h1>
+  <div class="row" style="gap:12px;margin-top:12px">${LP.logo(l,'lg')}<div class="grow"><h1 style="font-size:30px">${E(l.name)}</h1>${hhBadge(l)}</div></div>
   <div class="row" style="margin-top:10px"><div class="progress grow"><i style="width:${p}%"></i></div><b class="small">${p}% Complete</b></div>
   <p class="xs muted" style="margin:4px 0 0">Based on ${ms.length} owner-approved milestones · ${LP.interest(l)} people interested</p>
   <p style="margin:14px 0">${E(l.tagline)}</p>
-  ${live?`<a class="btn primary block" href="${E(l.launchUrl)}" target="_blank" rel="noopener">${ic('install')} Open / Install ${E(l.name)}</a><div style="height:10px"></div>`:''}
+  ${live?(l.launchUrl.startsWith(STORE_URL)
+    ?`<a class="btn primary block hh-btn" href="${E(l.launchUrl)}" target="_blank" rel="noopener"><img src="img/hunnyhive-mark.svg" alt="" class="hh-mark"> Get ${E(l.name)} on ${E(STORE)}</a><div style="height:10px"></div>`
+    :`<a class="btn primary block" href="${E(l.launchUrl)}" target="_blank" rel="noopener">${ic('install')} Open / Install ${E(l.name)}</a><div style="height:10px"></div>`):''}
   <div class="actbar">
     <button class="act ${fol?'on':''}" data-follow="${E(l.id)}" aria-pressed="${fol}">${ic('bell')}${fol?'Following':'Follow'}</button>
     <button class="act ${live?'':'hot'}" data-waitlist="${E(l.id)}">${ic('mail')}Join Waitlist</button>
@@ -360,5 +370,5 @@ document.addEventListener('change',e=>{if(e.target.matches('[data-sort]')){const
 if(LP.settings().collapsed)document.querySelector('.shell').classList.add('collapsed');
 if('serviceWorker' in navigator)addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));
 addEventListener('online',()=>LP.remote.enabled&&LP.remote.init().then(()=>LP.remote.flushPending()));
-LP.boot=()=>{LP.render();LP.remote.init()};
+LP.boot=()=>{LP.render();LP.remote.init();LP.refreshCatalog()};
 })();

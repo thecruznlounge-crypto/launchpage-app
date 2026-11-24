@@ -1,10 +1,10 @@
 /* LaunchPage.link service worker — offline-first app shell */
-const VERSION = 'launchpage-v2.1.0';
+const VERSION = 'launchpage-v2.2.0';
 const CORE = [
   './', './index.html', './manifest.webmanifest',
   './css/styles.css',
   './js/config.js', './js/icons.js', './js/data.js', './js/zip.js', './js/store.js', './js/app.js', './js/studio.js', './js/hunnyhive.js',
-  './img/icon-192.png', './img/icon-512.png', './img/icon-maskable-512.png', './img/apple-touch-icon.png', './img/favicon-32.png', './img/launches/merkuri.jpg'
+  './img/icon-192.png', './img/icon-512.png', './img/icon-maskable-512.png', './img/apple-touch-icon.png', './img/favicon-32.png', './img/hunnyhive-mark.svg', './img/logos/blockmogul.png', './img/logos/domin8.png', './img/logos/kayaos.png', './img/logos/merkuri.png', './img/logos/onedrful.png', './img/logos/piggybrain.png', './img/logos/ratestar.png', './img/logos/snaplery.png', './img/logos/thenwe.png', './img/logos/thrifteyes.png', './img/logos/tourvue.png', './img/logos/vewr.png', './img/logos/voyus.png', './img/launches/merkuri.jpg'
 ];
 self.addEventListener('install', e => {
   e.waitUntil(caches.open(VERSION).then(c => c.addAll(CORE)).then(() => self.skipWaiting()));

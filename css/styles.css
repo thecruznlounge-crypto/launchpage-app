@@ -136,7 +136,7 @@ label.f{display:grid;gap:6px;font-size:13px;font-weight:600;color:var(--muted)}
 .lrow{display:flex;gap:12px;align-items:center;padding:10px;border-radius:var(--r);background:var(--card);border:1px solid var(--line);cursor:pointer;transition:border-color .2s}
 .lrow:hover{border-color:var(--line2)}
 .thumb{flex:none;width:118px;height:76px;border-radius:12px;overflow:hidden;background:var(--surface);position:relative}
-.thumb svg,.thumb img{width:100%;height:100%;display:block;object-fit:cover}
+.thumb>svg,.thumb>img:not(.logo){width:100%;height:100%;display:block;object-fit:cover}
 .lrow .nm{font-weight:800;font-size:17px;letter-spacing:-.01em}
 .lrow .sub{font-size:12.5px;color:var(--text);opacity:.85;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .lrow .pct{font-weight:700;font-size:14px;min-width:38px;text-align:right}
@@ -148,7 +148,7 @@ label.f{display:grid;gap:6px;font-size:13px;font-weight:600;color:var(--muted)}
 .lcard{display:flex;flex-direction:column;border-radius:var(--r);overflow:hidden;background:var(--card);border:1px solid var(--line);cursor:pointer;transition:border-color .2s,transform .15s}
 .lcard:hover{border-color:var(--line2);transform:translateY(-2px)}
 .lcard .cover{aspect-ratio:16/8;position:relative}
-.lcard .cover svg,.lcard .cover img{width:100%;height:100%;display:block;object-fit:cover}
+.lcard .cover>svg,.lcard .cover>img:not(.logo){width:100%;height:100%;display:block;object-fit:cover}
 .lcard .cover .pill{position:absolute;left:10px;top:10px;backdrop-filter:blur(6px);background:rgba(7,20,28,.72)}
 .lcard .cover .save-btn{position:absolute;right:6px;top:6px;background:rgba(7,20,28,.6)}
 .lcard .body{padding:13px 14px 15px;display:grid;gap:9px;flex:1}
@@ -226,3 +226,20 @@ pre.code{background:#06121a;border:1px solid var(--line);border-radius:12px;padd
 @media (min-width:640px){.sheet-bg{align-items:center}.sheet{border-radius:22px}}
 .view{animation:fade .2s}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+/* Hunnyhive mark (store partner) */
+.hh-mark{width:26px;height:26px;border-radius:7px;flex:none;display:block}
+.hh-mark.lg{width:34px;height:34px;border-radius:9px}
+.btn.hh-btn{background:linear-gradient(180deg,#FFD452,#F5A50E);color:#241A0E;box-shadow:0 8px 24px rgba(245,165,14,.3)}
+
+/* App logos */
+.logo{display:grid;place-items:center;flex:none;width:44px;height:44px;border-radius:12px;object-fit:cover;background:var(--card2);border:1px solid var(--line);font-weight:800;color:var(--accent);font-size:16px;letter-spacing:-.02em}
+.logo.mono{background:linear-gradient(145deg,#1c4452,#0d2430)}
+.logo.lg{width:64px;height:64px;border-radius:16px;font-size:22px}
+.logo.xl{width:84px;height:84px;border-radius:20px;font-size:28px}
+.logo.on-thumb{position:absolute;left:6px;bottom:6px;width:30px;height:30px;border-radius:8px;font-size:11px;box-shadow:0 2px 8px rgba(0,0,0,.45)}
+.logo.row{width:76px;height:76px;border-radius:18px;font-size:24px}
+/* Hunnyhive badge */
+.hh-badge{display:inline-flex;align-items:center;gap:7px;margin-top:6px;padding:4px 11px 4px 4px;border-radius:999px;font-size:12.5px;font-weight:700;text-decoration:none;color:#241A0E;background:linear-gradient(180deg,#FFD452,#F5A50E)}
+.hh-badge img{width:22px;height:22px;border-radius:6px}
+.hh-badge.soon{color:#FFD452;background:rgba(245,165,14,.12);border:1px solid rgba(245,165,14,.35)}

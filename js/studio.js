@@ -78,7 +78,7 @@ function dash(){
 function projRow(p){
   const pct=projPct(p), l=p.launchId&&LP.allLaunches().find(x=>x.id===p.launchId);
   return `<div class="lrow" data-go="#/studio/projects/${E(p.id)}" role="link" tabindex="0">
-    <div class="thumb" style="width:96px;height:64px">${l?LP.media(l,{w:192,h:128}):launchArt({id:p.id,name:p.name,category:p.type},{w:192,h:128})}</div>
+    ${LP.logo(l||{id:p.id,name:p.name,logo:p.logo},'row')}
     <div class="grow"><div class="row between"><div class="nm" style="font-size:16px">${E(p.name)}</div><span class="pill ${p.stage==='ready'?'live':p.stage==='review'?'warn':'mute'}">${stageLabel(p.stage)}</span></div>
     <div class="sub">${E(p.type)}${p.kind==='transform'?' · Redesign':''} · ${p.visibility==='private'?'Private':p.visibility==='page'?'Public page':'Discoverable'}</div>
     <div class="row" style="margin-top:7px"><div class="progress grow"><i style="width:${pct}%"></i></div><span class="pct">${pct}%</span></div></div></div>`;
@@ -148,7 +148,7 @@ function project(id,tab){
   const tabs=[['overview','Overview'],['milestones','Milestones'],['updates','Public Updates'],['audit',`Findings${audit?` (${audit.issues.length})`:''}`],['redesign','Redesign'],['deploy','Deploy']];
   const body={overview,milestones,updates,audit:auditTab,redesign:redesignTab,deploy}[tab]||overview;
   return LP.topbar({title:'Project',studio:true,back:true})+`<main class="main">
-  <div class="card row" style="gap:14px"><div class="thumb" style="width:84px;height:84px">${l?LP.media(l,{w:168,h:168}):launchArt({id:p.id,name:p.name,category:p.type},{w:168,h:168})}</div>
+  <div class="card row" style="gap:14px">${LP.logo(l||{id:p.id,name:p.name,logo:p.logo},'xl')}
     <div class="grow"><h2>${E(p.name)}</h2>${p.url?`<a class="small" href="${E(p.url)}" target="_blank" rel="noopener noreferrer">${E(p.url.replace(/^https?:\/\//,''))}</a>`:`<div class="small muted">${E(p.type)}</div>`}
     <div class="row wrap" style="gap:6px;margin-top:6px"><span class="pill mute">${stageLabel(p.stage)}</span>${cl?`<span class="tag">${ic('user')} ${E(cl.name)}</span>`:''}${audit?`<span class="pill ${audit.error?'err':'live'}">${audit.error?'Audit failed':'Audit imported'}</span>`:p.kind==='transform'?'<span class="pill warn">Audit pending</span>':''}</div></div>
     <div style="text-align:center"><b style="font-size:24px">${projPct(p)}%</b><div class="xs muted">milestones</div></div></div>
@@ -168,6 +168,7 @@ function overview(p,l){
       <div class="grid g2">${field('Public status',`<input class="input" name="status" value="${E(l.status)}">`)}${field('Target launch date',`<input class="input" name="targetDate" type="date" value="${E(l.targetDate||'')}">`)}</div>
       ${field('Public tagline',`<input class="input" name="tagline" value="${E(l.tagline)}">`)}
       ${field('Roles wanted (comma separated)',`<input class="input" name="roles" value="${E(l.roles.join(', '))}">`)}
+      <div class="row" style="gap:12px">${LP.logo(l,'lg')}<div class="grow">${field('App logo (square PNG/JPG/SVG, shown everywhere on LaunchPage)',`<input class="input" type="file" accept="image/png,image/jpeg,image/svg+xml,image/webp" data-logo-upload="${E(l.id)}">`)}<p class="xs muted" style="margin:4px 0 0">${l.logo?`Custom logo set · <button type="button" class="link-btn" style="min-height:0;padding:0" data-logo-clear="${E(l.id)}">use ${LP.hhListing(l)?'Hunnyhive icon':'initials'} instead</button>`:LP.hhListing(l)?'Using its Hunnyhive icon.':'No logo yet — showing initials. Sending it to Hunnyhive also adds its store icon.'}</p></div></div>
       <div class="grid g2">${field('Hero image URL',`<input class="input" name="image" type="url" value="${E(l.image||'')}" placeholder="https://…/hero.jpg">`)}${field('Hero video URL (approved)',`<input class="input" name="video" type="url" value="${E(l.video||'')}" placeholder="https://…/promo.mp4">`)}</div>
       ${field('Screenshot URLs (one per line)',`<textarea name="screenshots">${E((l.screenshots||[]).join('\n'))}</textarea>`)}
       ${field('Final launch link (shown when status is Live)',`<input class="input" name="launchUrl" type="url" value="${E(l.launchUrl||'')}" placeholder="https://hunnyhive.app/…">`)}
@@ -460,3 +461,18 @@ document.addEventListener('click',async e=>{
 });
 window.addEventListener('lp:auth',()=>{if(LP.remote.isOperator())LP.remote.pullStudio().then(()=>LP.render());else LP.render()});
 })();
+
+/* ---------- logo upload: resized to a 256px square PNG, kept with the launch ---------- */
+document.addEventListener('change',async e=>{
+  const t=e.target; if(!t.dataset||t.dataset.logoUpload==null||!t.files[0])return;
+  const f=t.files[0]; if(f.size>5e6)return LP.toast('That image is over 5 MB');
+  const img=new Image(); img.src=URL.createObjectURL(f);
+  try{await img.decode()}catch{return LP.toast('Could not read that image')}
+  const c=document.createElement('canvas');c.width=c.height=256;const x=c.getContext('2d');
+  const s=Math.min(img.naturalWidth,img.naturalHeight)||256, sx=(img.naturalWidth-s)/2, sy=(img.naturalHeight-s)/2;
+  x.imageSmoothingQuality='high';x.drawImage(img,sx,sy,s,s,0,0,256,256);
+  LP.setOverride(t.dataset.logoUpload,{logo:c.toDataURL('image/png')});LP.log('Updated logo for '+t.dataset.logoUpload);LP.toast('Logo updated');LP.render();
+});
+document.addEventListener('click',e=>{const b=e.target.closest('[data-logo-clear]');if(!b)return;
+  LP.setOverride(b.dataset.logoClear,{logo:''});
+  LP.toast('Logo reset');LP.render();});

@@ -70,6 +70,29 @@ LP.signupCount=id=>ls.get(K.signups,[]).filter(s=>s.launch===id||(s.launches||[]
 LP.interest=l=>(l.interest||0)+LP.signupCount(l.id);
 LP.statusTone=l=>l.tone||(/live|launched/i.test(l.status)?'live':/beta|alpha|build|prototype/i.test(l.status)?'beta':'idea');
 
+/* ---------- Hunnyhive catalog: logos + listings for current and future projects ---------- */
+const HHURL=((window.LP_CONFIG||{}).storeUrl||'https://hunnyhive.app').replace(/\/$/,'');
+const host=u=>{try{return new URL(/^https?:/.test(u)?u:'https://'+u).host.replace(/^www\./,'').toLowerCase()}catch{return ''}};
+LP.hhCatalog=()=>ls.get('lp2_hhcat',{});
+LP.refreshCatalog=async()=>{
+  if(!navigator.onLine)return;
+  try{
+    const j=await (await fetch(HHURL+'/apps.json',{cache:'no-store'})).json();
+    const cat={};(j.apps||[]).filter(a=>a.status!=='hidden').forEach(a=>{cat[a.slug]={slug:a.slug,name:a.name,icon:a.icon,status:a.status,hosts:[a.domain,a.url,a.installUrl].filter(x=>/^https:/i.test(x||'')).map(host)}});
+    const before=JSON.stringify(LP.hhCatalog());ls.set('lp2_hhcat',cat);
+    if(before!==JSON.stringify(cat))window.dispatchEvent(new Event('lp:data'));
+  }catch{}
+};
+LP.hhListing=l=>{
+  const cat=LP.hhCatalog(); if(!l)return null;
+  if(l.hh&&cat[l.hh])return cat[l.hh];
+  if(cat[l.id])return cat[l.id];
+  const hs=[l.site,l.launchUrl].filter(Boolean).map(host).filter(h=>h&&h!==host(HHURL));
+  return Object.values(cat).find(a=>a.hosts.some(h=>hs.includes(h)))||null;
+};
+LP.hhPage=a=>HHURL+'/apps/'+a.slug;
+LP.logoFor=l=>{ if(!l)return null; if(l.logo)return l.logo; const a=LP.hhListing(l); return a&&a.icon?(/^https?:/.test(a.icon)?a.icon:HHURL+a.icon):null; };
+
 /* ---------- public progress updates ---------- */
 LP.isLive=u=>u.state==='published'||(u.state==='scheduled'&&u.publishAt&&new Date(u.publishAt)<=new Date());
 LP.publicUpdates=id=>ls.get(K.updates,[]).filter(u=>(!id||u.launchId===id)&&LP.isLive(u)).sort((a,b)=>(b.publishAt||b.createdAt).localeCompare(a.publishAt||a.createdAt));
@@ -119,7 +142,7 @@ LP.remote={
   async signOut(){await this.client?.auth.signOut();this.user=null;this.role=null},
   async fetchPublic(){
     const [l,u,i]=await Promise.all([this.client.from('launches').select('*'),this.client.from('launch_updates').select('*'),this.client.rpc('public_interest')]);
-    if(l.data?.length) remoteLaunches=l.data.filter(x=>x.visibility!=='private').map(x=>({id:x.id,name:x.name,category:x.category,status:x.status,tone:x.tone,tagline:x.tagline,site:x.site,interest:x.interest,roles:x.roles||[],milestones:x.milestones||[],image:x.image,video:x.video,screenshots:x.screenshots||[],launchUrl:x.launch_url,targetDate:x.target_date,visibility:x.visibility}));
+    if(l.data?.length) remoteLaunches=l.data.filter(x=>x.visibility!=='private').map(x=>({id:x.id,name:x.name,category:x.category,status:x.status,tone:x.tone,tagline:x.tagline,site:x.site,logo:x.logo,hh:x.hh_slug,interest:x.interest,roles:x.roles||[],milestones:x.milestones||[],image:x.image,video:x.video,screenshots:x.screenshots||[],launchUrl:x.launch_url,targetDate:x.target_date,visibility:x.visibility}));
     if(u.data){const loc=ls.get(K.updates,[]).filter(x=>!u.data.some(r=>r.id===x.id));ls.set(K.updates,[...loc,...u.data.map(r=>({id:r.id,launchId:r.launch_id,type:r.type,title:r.title,body:r.body,mediaUrl:r.media_url,state:r.state,publishAt:r.publish_at,createdAt:r.created_at}))])}
     if(i.data) remoteInterest=Object.fromEntries(i.data.map(r=>[r.launch_id,r.n]));
     window.dispatchEvent(new Event('lp:data'));
@@ -142,7 +165,7 @@ LP.remote={
   async publishLaunch(id){
     if(!this.client||!this.isOperator())return;
     const l=LP.allLaunches().find(x=>x.id===id); if(!l)return;
-    await this.client.from('launches').upsert({id:l.id,name:l.name,category:l.category,status:l.status,tone:l.tone,tagline:l.tagline,site:l.site,interest:l.interest||0,roles:l.roles,milestones:l.milestones.filter(m=>m.approved&&m.published),image:l.image||null,video:l.video||null,screenshots:l.screenshots||[],launch_url:l.launchUrl||null,target_date:l.targetDate||null,visibility:l.visibility});
+    await this.client.from('launches').upsert({id:l.id,name:l.name,category:l.category,status:l.status,tone:l.tone,tagline:l.tagline,site:l.site,interest:l.interest||0,roles:l.roles,milestones:l.milestones.filter(m=>m.approved&&m.published),logo:l.logo||null,hh_slug:l.hh||null,image:l.image||null,video:l.video||null,screenshots:l.screenshots||[],launch_url:l.launchUrl||null,target_date:l.targetDate||null,visibility:l.visibility});
   },
   async publishUpdate(u){
     if(!this.client||!this.isOperator())return;

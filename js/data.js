@@ -19,6 +19,9 @@ window.SEED_LAUNCHES = [
 /* Renamed launches: old id → new id (old links and saved data keep working). */
 window.LAUNCH_ALIASES={shoppervon:'merkuri'};
 
+/* Real app logos (copied from each app's Hunnyhive icon) and its Hunnyhive store slug. */
+window.SEED_LAUNCHES.forEach(l=>{ l.logo='img/logos/'+l.id+'.png'; l.hh=({thrifteyes:'thrifteye'})[l.id]||l.id; });
+
 window.HELP_ROLES=['Customer','Beta Tester','Partner','Promoter','Investor','Supplier','Creator','Sponsor','Operator','Guide','Teacher','Driver','Photographer','Marketing','Feedback','Developer','Designer'];
 
 /* Generated brand cover art (used until a real image/screenshot is uploaded for the launch). */

@@ -32,7 +32,7 @@ const checkList=checks=>(checks||[]).map(c=>`<div class="li" style="padding:7px 
 
 LP.hunnyhiveCard=function(p){
   const h=p.hunnyhive||{}, bl=blockers(p);
-  const head=`<div class="row between"><div class="row" style="gap:8px"><span style="color:var(--warn)">${ic('install')}</span><h3>${E(STORE)} store</h3></div>${
+  const head=`<div class="row between"><div class="row" style="gap:8px"><img src="img/hunnyhive-mark.svg" alt="" class="hh-mark"><h3>${E(STORE)} store</h3></div>${
     h.status==='live'?'<span class="pill live">Live</span>':h.status==='submitted'?'<span class="pill warn">In review</span>':h.status==='opened'?'<span class="pill warn">Finish on Hunnyhive</span>':'<span class="pill mute">Not sent</span>'}</div>`;
   let body;
   if(h.status==='live') body=`<p class="small muted">Listed as <b>${E(h.slug)}</b>. Installs go through the store's one-tap install.</p>
@@ -51,7 +51,7 @@ LP.hunnyhiveCard=function(p){
 function sendSheet(p){
   const l=launchOf(p), s=LP.settings(), cl=p.clientId&&LP.db.find('clients',p.clientId);
   const cat=LP.hhCategory(l?.category||p.category||'');
-  LP.sheet(`<div class="row between"><h2>Send to ${E(STORE)}</h2><button class="icon-btn" data-close aria-label="Close">✕</button></div>
+  LP.sheet(`<div class="row between"><div class="row" style="gap:10px"><img src="img/hunnyhive-mark.svg" alt="" class="hh-mark lg"><h2>Send to ${E(STORE)}</h2></div><button class="icon-btn" data-close aria-label="Close">✕</button></div>
   <form class="form" data-hhform="${E(p.id)}" novalidate style="margin-top:12px">
     <label class="f">App address<input class="input" name="url" type="url" value="${E(appUrl(p))}" required></label>
     <label class="f">Name<input class="input" name="name" value="${E(l?.name||p.name)}" maxlength="80"></label>
