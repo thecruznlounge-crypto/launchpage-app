@@ -1,9 +1,9 @@
 /* LaunchPage.link service worker — offline-first app shell */
-const VERSION = 'launchpage-v2.0.2';
+const VERSION = 'launchpage-v2.1.0';
 const CORE = [
   './', './index.html', './manifest.webmanifest',
   './css/styles.css',
-  './js/config.js', './js/icons.js', './js/data.js', './js/zip.js', './js/store.js', './js/app.js', './js/studio.js',
+  './js/config.js', './js/icons.js', './js/data.js', './js/zip.js', './js/store.js', './js/app.js', './js/studio.js', './js/hunnyhive.js',
   './img/icon-192.png', './img/icon-512.png', './img/icon-maskable-512.png', './img/apple-touch-icon.png', './img/favicon-32.png', './img/launches/merkuri.jpg'
 ];
 self.addEventListener('install', e => {

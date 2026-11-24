@@ -24,3 +24,12 @@ Every push to `main` deploys automatically.
 
 ## Client sites
 The Studio **never** deploys to a client domain by itself. Before a project can be marked *Launched*, record the explicit approval in Project → Deploy (with an approval reference). Then deploy with the client's credentials using the steps above, or hand off the ZIP.
+
+## Sending a finished project to Hunnyhive
+Studio → Project → Deploy → **Hunnyhive store**.
+1. The button appears once the project has an https:// address, is at *Ready to Launch* or *Launched*, and (for client work) the client's approval is recorded.
+2. **Send to Hunnyhive** pre-fills name, description, developer and category (mapped to the store's categories) and submits to `hunnyhive.app/api/submit.php`. The store runs its install check, and the results show in Studio.
+3. Approve it in MasterDash (marked **From LaunchPage**). Nothing is listed before that.
+4. **Check if it's live** picks up the listing. **Make it the public launch link** turns the public page's button into *Open / Install*, pointing at the store listing.
+
+The direct submit needs the Hunnyhive Worker to allow `launchpage.link` (patch `hunnyhive-launchpage.patch`). Without it, Studio opens the store's submit page pre-filled instead.

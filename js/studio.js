@@ -260,6 +260,7 @@ function deploy(p){
     <label class="check" style="border-color:rgba(245,165,36,.5)"><input type="checkbox" name="approved" ${d.approved?'checked':''}> <span><b>Explicit approval to publish received</b>${cl?` from ${E(cl.name)}`:''} <span class="xs muted">— required before marking Launched. LaunchPage never deploys to a client domain on its own.</span></span></label>
     ${field('Approval reference (email, signed proposal, message)',`<input class="input" name="approvalRef" value="${E(d.approvalRef||'')}">`)}
     <button class="btn primary">Save deployment status</button></form></div>
+  ${LP.hunnyhiveCard?LP.hunnyhiveCard(p):''}
   <div class="card sec"><h3>Packages</h3><p class="small muted">Generate the PWA install kit (manifest, icons, service worker, one-tap install snippet, Play Store asset links) as a ZIP.</p><button class="btn ghost" data-go="#/studio/tools/pwa?project=${E(p.id)}">${ic('download')} Open PWA Kit</button>
   <p class="small muted" style="margin-top:12px">Deployment guides: <span class="kbd">docs/DEPLOY.md</span> (Cloudflare Pages & cPanel).</p></div>`;
 }
